@@ -1,15 +1,31 @@
 import ollama
+import sys
 from datetime import date
 from ollama import Options
 from rich.console import Console
 from rich.live import Live
 from rich.markdown import Markdown
 
+# ============================================================================
+#  THINKING (REASONING) ON / OFF  <-- change this one line
+#
+#    THINK = True    the model reasons first: you see its thinking, then the
+#                    answer (slower, often better)
+#    THINK = False   straight to the answer (much faster)
+#
+#  Or leave it and switch it off from the command line:
+#    python ai_astrology.py --no-think
+# ============================================================================
+THINK = True
+if "--no-think" in sys.argv:
+    THINK = False
+
 
 def main():
     today = date.today().strftime('%A, %d-%m-%Y')
     LLM = "qwen3.5:4b"
 
+    print(f"Thinking is {'ON' if THINK else 'OFF'} (change THINK at the top of ai_astrology.py, or run with --no-think)\n")
     name = input("Enter your name: ")
     star_sign = input("Enter your star sign: ")
 
@@ -21,7 +37,8 @@ def main():
     instruction = f"Please provide a horoscope for {name} whose star sign is {star_sign}. Today's date is {today}."
 
     response = ollama.chat(
-        model=LLM, think=True, stream=False,
+        model=LLM, stream=False,
+        think=THINK,  # ← thinking on/off: see THINK at the top
         messages=[{'role': 'system', 'content': system_prompt}, {'role': 'user', 'content': instruction}],
         options=Options(temperature=0.8, num_ctx=4096, top_p=0.95, top_k=40, num_predict=-1),
     )

@@ -6,6 +6,7 @@ Same app as ai_astrology.py (qwen3.5:4b via Ollama, thinking on, rendered with r
 only the prompts change. Try changing Oma Gerda's personality in SYSTEM_PROMPT, or
 turn the temperature up for wilder predictions. Needs `pip install ollama rich`.
 """
+import sys
 from datetime import date
 
 import ollama
@@ -14,6 +15,20 @@ from rich.console import Console
 from rich.markdown import Markdown
 
 LLM = "qwen3.5:4b"
+
+# ============================================================================
+#  THINKING (REASONING) ON / OFF  <-- change this one line
+#
+#    THINK = True    the model reasons first: you see its thinking, then the
+#                    answer (slower, often better)
+#    THINK = False   straight to the answer (much faster)
+#
+#  Or leave it and switch it off from the command line:
+#    python ai_astrology-de.py --no-think
+# ============================================================================
+THINK = True
+if "--no-think" in sys.argv:
+    THINK = False
 WOCHENTAGE = ["Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag", "Samstag", "Sonntag"]
 
 SYSTEM_PROMPT = """Du bist Oma Gerda, eine KI-Astrologin aus Berlin-Neukölln mit echter Berliner Schnauze.
@@ -35,6 +50,7 @@ def main():
     heute = date.today()
     datum = f"{WOCHENTAGE[heute.weekday()]}, {heute.strftime('%d.%m.%Y')}"
 
+    print(f"Thinking is {'ON' if THINK else 'OFF'} (change THINK at the top of ai_astrology-de.py, or run with --no-think)\n")
     name = input("Wie heißt du? ")
     sternzeichen = input("Dein Sternzeichen? ")
 
@@ -44,7 +60,8 @@ def main():
     console = Console()
     with console.status("[magenta]Oma Gerda befragt die Sterne …[/magenta]"):
         response = ollama.chat(
-            model=LLM, think=True, stream=False,
+            model=LLM, stream=False,
+            think=THINK,  # ← thinking on/off: see THINK at the top
             messages=[{"role": "system", "content": SYSTEM_PROMPT},
                       {"role": "user", "content": anweisung}],
             options=Options(temperature=0.9, num_ctx=4096, top_p=0.95, top_k=40, num_predict=-1),
