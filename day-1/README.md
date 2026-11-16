@@ -117,6 +117,7 @@ different model name or `base_url`.
 |---|---|
 | `vision_demo_ollama.py` | **Multimodal.** Sends a local `image.jpg` plus a prompt to a vision model (`qwen3.6:27b`) and asks it to describe the image and guess where it was taken. Drop in any image. |
 | `ai_astrology.py` | A small end‑to‑end app: prompts for a name and star sign, then has `qwen3.5:4b` (via Ollama) write a horoscope. Thinking is deliberately left **on** and the model's reasoning is rendered separately with `rich`. Needs `pip install ollama rich`. |
+| `ai_astrology-de.py` | **Das lustige deutsche Horoskop.** The same app in German: Oma Gerda, a Berlin astrologer with *Berliner Schnauze*, predicts punctual S-Bahns, a Bürgeramt appointment and the perfect Currywurst. Only the prompts differ from `ai_astrology.py`, so it shows how much of an app's character lives in the system prompt. Needs `pip install ollama rich`. |
 | `ai_astrology_groq.py` | The cloud twin of the above, swapping Ollama for **Groq** (`qwen/qwen3-32b`, `reasoning_effort="none"`). Keep the two in sync if you change one. |
 
 ---
