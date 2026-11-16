@@ -11,6 +11,8 @@ TEACHER_NOTES.md
 
 # Face recognition lab: attendees' own photos, never commit
 /day-1/faces/
+# Never publish other people's faces (John.jpg is the only one committed, on purpose)
+/day-1/faces/Rachel.*
 /day-1/labelled.jpg
 /day-2/berlin-*-page-*.md
 
