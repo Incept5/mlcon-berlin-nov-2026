@@ -12,6 +12,7 @@ from datetime import date
 import ollama
 from ollama import Options
 from rich.console import Console
+from rich.live import Live
 from rich.markdown import Markdown
 
 LLM = "qwen3.5:4b"
@@ -57,22 +58,37 @@ def main():
     anweisung = (f"Bitte schreib ein Horoskop für {name}, Sternzeichen {sternzeichen}. "
                  f"Heute ist {datum}.")
 
+    stream = ollama.chat(
+        model=LLM, stream=True,   # stream=True: tokens arrive as they are generated
+        think=THINK,  # ← thinking on/off: see THINK at the top
+        messages=[{"role": "system", "content": SYSTEM_PROMPT},
+                  {"role": "user", "content": anweisung}],
+        options=Options(temperature=0.9, num_ctx=4096, top_p=0.95, top_k=40, num_predict=-1),
+    )
+    show(stream, "🤔 Oma Gerdas Gedanken:", "🔮 Dein Horoskop:")
+
+
+def show(stream, thinking_title, answer_title):
+    """Print the thinking live (grey), then the answer live (rendered as Markdown)."""
     console = Console()
-    with console.status("[magenta]Oma Gerda befragt die Sterne …[/magenta]"):
-        response = ollama.chat(
-            model=LLM, stream=False,
-            think=THINK,  # ← thinking on/off: see THINK at the top
-            messages=[{"role": "system", "content": SYSTEM_PROMPT},
-                      {"role": "user", "content": anweisung}],
-            options=Options(temperature=0.9, num_ctx=4096, top_p=0.95, top_k=40, num_predict=-1),
-        )
-
-    if getattr(response.message, "thinking", None):
-        console.print(f"[bold blue]🤔 Oma Gerdas Gedanken:[/bold blue]\n[dim]{response.message.thinking}[/dim]")
-        console.print("\n" + "=" * 50 + "\n")
-
-    console.print("[bold magenta]🔮 Dein Horoskop:[/bold magenta]")
-    console.print(Markdown(response.message.content))
+    thinking, answer, live = False, "", None
+    for chunk in stream:
+        if chunk.message.thinking:                  # reasoning tokens come first
+            if not thinking:
+                console.print(f"[bold blue]{thinking_title}[/bold blue]")
+                thinking = True
+            console.print(chunk.message.thinking, style="dim", end="", markup=False, highlight=False)
+        if chunk.message.content:                   # then the answer itself
+            if live is None:
+                if thinking:
+                    console.print("\n\n" + "=" * 50 + "\n")
+                console.print(f"[bold magenta]{answer_title}[/bold magenta]")
+                live = Live(Markdown(""), console=console, refresh_per_second=12, vertical_overflow="visible")
+                live.start()
+            answer += chunk.message.content
+            live.update(Markdown(answer))
+    if live:
+        live.stop()
 
 
 if __name__ == "__main__":

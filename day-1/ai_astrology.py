@@ -36,30 +36,36 @@ def main():
 
     instruction = f"Please provide a horoscope for {name} whose star sign is {star_sign}. Today's date is {today}."
 
-    response = ollama.chat(
-        model=LLM, stream=False,
+    stream = ollama.chat(
+        model=LLM, stream=True,   # stream=True: tokens arrive as they are generated
         think=THINK,  # ← thinking on/off: see THINK at the top
         messages=[{'role': 'system', 'content': system_prompt}, {'role': 'user', 'content': instruction}],
         options=Options(temperature=0.8, num_ctx=4096, top_p=0.95, top_k=40, num_predict=-1),
     )
+    show(stream, "🤔 Maude's Thinking Process:", "✨ Your Horoscope:")
 
+
+def show(stream, thinking_title, answer_title):
+    """Print the thinking live (grey), then the answer live (rendered as Markdown)."""
     console = Console()
-
-    if not isinstance(response, ollama.ChatResponse):   # stream=True: a generator of chunks
-        console.print("[bold magenta]✨ Your Horoscope:[/bold magenta]")
-        text = ""
-        with Live(Markdown(text), console=console, refresh_per_second=10) as live:
-            for chunk in response:
-                text += chunk.message.content or ""
-                live.update(Markdown(text))
-        return
-
-    if hasattr(response.message, 'thinking') and response.message.thinking:
-        console.print(f"[bold blue]🤔 Maude's Thinking Process:[/bold blue]\n[dim]{response.message.thinking}[/dim]")
-        console.print("\n" + "=" * 50 + "\n")
-
-    console.print("[bold magenta]✨ Your Horoscope:[/bold magenta]")
-    console.print(Markdown(response.message.content))
+    thinking, answer, live = False, "", None
+    for chunk in stream:
+        if chunk.message.thinking:                  # reasoning tokens come first
+            if not thinking:
+                console.print(f"[bold blue]{thinking_title}[/bold blue]")
+                thinking = True
+            console.print(chunk.message.thinking, style="dim", end="", markup=False, highlight=False)
+        if chunk.message.content:                   # then the answer itself
+            if live is None:
+                if thinking:
+                    console.print("\n\n" + "=" * 50 + "\n")
+                console.print(f"[bold magenta]{answer_title}[/bold magenta]")
+                live = Live(Markdown(""), console=console, refresh_per_second=12, vertical_overflow="visible")
+                live.start()
+            answer += chunk.message.content
+            live.update(Markdown(answer))
+    if live:
+        live.stop()
 
 if __name__ == "__main__":
     main()
