@@ -22,8 +22,6 @@ TEACHER_NOTES.md
 # Keynote decks never go to GitHub
 *.key
 
-# Day 2 is published on the morning of Day 2: delete this line, then add day-2/
-/day-2/
 
 # Audio written by the Day-1 TTS demos
 /day-1/output/
