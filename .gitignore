@@ -25,3 +25,7 @@ TEACHER_NOTES.md
 
 # Audio written by the Day-1 TTS demos
 /day-1/output/
+
+# Vibe-coding runs: server logs and scraped page caches
+/day-2/vibe/*/server.log
+/day-2/vibe/*/cache/

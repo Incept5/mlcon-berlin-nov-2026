@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="A private, local-AI powered explorer for the GDPR articles.">
+  <title>GDPR Article Explorer — Kimi K3.1</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="ambient ambient-one" aria-hidden="true"></div>
+  <div class="ambient ambient-two" aria-hidden="true"></div>
+
+  <header class="masthead">
+    <a class="brand" href="./" aria-label="Kimi K3.1 GDPR explorer home">
+      <span class="brand-mark" aria-hidden="true">K</span>
+      <span class="brand-name">Kimi K3.1</span>
+    </a>
+    <div class="masthead-meta">
+      <span class="status-dot" aria-hidden="true"></span>
+      <span>Private by design</span>
+      <span class="meta-divider" aria-hidden="true"></span>
+      <span>Local intelligence</span>
+    </div>
+  </header>
+
+  <main class="app-shell">
+    <aside class="sidebar" aria-label="GDPR article summaries">
+      <section class="intro">
+        <p class="eyebrow">The regulation, distilled</p>
+        <h1>GDPR<br><span>Article Explorer.</span></h1>
+        <p class="intro-copy">Find the principle. Read the law. Every summary generated on your machine.</p>
+      </section>
+
+      <div class="search-wrap">
+        <svg class="search-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <circle cx="11" cy="11" r="6.5"></circle>
+          <path d="m16 16 4 4"></path>
+        </svg>
+        <label class="sr-only" for="search">Search article summaries</label>
+        <input id="search" type="search" placeholder="Search summaries or articles…" autocomplete="off">
+        <kbd aria-hidden="true">/</kbd>
+      </div>
+
+      <div class="index-meta">
+        <span id="article-count">Loading articles…</span>
+        <span class="local-label">OLLAMA · QWEN3.5:4B</span>
+      </div>
+
+      <nav id="article-list" class="article-list" aria-label="Select an article"></nav>
+      <p id="no-results" class="no-results" hidden>No matching articles. Try another search.</p>
+    </aside>
+
+    <section id="article-detail" class="article-detail" aria-live="polite" aria-busy="true">
+      <div id="loading" class="loading-state">
+        <span class="loader" aria-hidden="true"></span>
+        <p>Opening the regulation…</p>
+      </div>
+
+      <article id="article-content" class="article-content" hidden>
+        <header class="article-header">
+          <div class="article-kicker">
+            <span id="chapter-label">GENERAL DATA PROTECTION REGULATION</span>
+            <span class="kicker-line" aria-hidden="true"></span>
+            <span id="position-label"></span>
+          </div>
+          <h2 id="article-title"></h2>
+          <p id="article-summary" class="article-summary"></p>
+          <div class="article-actions">
+            <a id="source-link" class="source-link" href="https://gdpr-info.eu/" target="_blank" rel="noopener noreferrer">
+              View original source
+              <svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M7 5h8v8M15 5l-9.5 9.5M13 15H5V7"></path></svg>
+            </a>
+            <button id="copy-button" class="copy-button" type="button">
+              <svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><rect x="6.5" y="6.5" width="9" height="9" rx="1.5"></rect><path d="M13 6.5v-2a1 1 0 0 0-1-1H4.5a1 1 0 0 0-1 1V12a1 1 0 0 0 1 1h2"></path></svg>
+              <span>Copy article</span>
+            </button>
+          </div>
+        </header>
+
+        <div class="law-heading">
+          <span>FULL LEGAL TEXT</span>
+          <span class="law-rule" aria-hidden="true"></span>
+        </div>
+        <div id="full-article" class="legal-text"></div>
+
+        <footer class="article-footer">
+          <p>Official text via gdpr-info.eu. AI summaries are for orientation, not legal advice.</p>
+          <div class="pagination">
+            <button id="previous-button" type="button" aria-label="Previous article">
+              <svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="m12.5 4.5-5 5.5 5 5.5"></path></svg>
+              Previous
+            </button>
+            <button id="next-button" type="button" aria-label="Next article">
+              Next
+              <svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="m7.5 4.5 5 5.5-5 5.5"></path></svg>
+            </button>
+          </div>
+        </footer>
+      </article>
+
+      <div id="error-state" class="error-state" hidden>
+        <p class="eyebrow">Unable to load</p>
+        <h2>The article index is missing.</h2>
+        <p>Run <code>python3 scrape_gdpr.py</code>, then refresh this page.</p>
+      </div>
+    </section>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>

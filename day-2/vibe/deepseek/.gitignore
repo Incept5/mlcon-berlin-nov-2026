@@ -1,0 +1,5 @@
+# Scraped page cache — re-fetchable
+cache/
+# Local server output
+server.log
+__pycache__/

@@ -1,0 +1,386 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GDPR Article Explorer · GLM 5.3</title>
+<style>
+  :root {
+    --bg0: #05070f;
+    --bg1: #0a0f21;
+    --panel: rgba(146, 160, 255, 0.045);
+    --panel-hover: rgba(146, 160, 255, 0.085);
+    --line: rgba(148, 163, 255, 0.14);
+    --line-soft: rgba(148, 163, 255, 0.08);
+    --text: #e9edfb;
+    --muted: #98a3c7;
+    --faint: #6b7699;
+    --a1: #7c8cff;   /* indigo */
+    --a2: #43e0d0;   /* teal   */
+    --a3: #b48bff;   /* violet */
+    --gold: #f0c579;
+    --grad: linear-gradient(100deg, var(--a1), var(--a2) 55%, var(--a3));
+    --mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, monospace;
+    --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Inter, "Helvetica Neue", Arial, sans-serif;
+    --shadow: 0 18px 50px rgba(2, 4, 12, 0.55);
+  }
+  * { box-sizing: border-box; }
+  html { scrollbar-color: rgba(124,140,255,.35) transparent; }
+  body {
+    margin: 0; font-family: var(--sans); color: var(--text);
+    background:
+      radial-gradient(1100px 500px at 85% -10%, rgba(124, 140, 255, 0.13), transparent 60%),
+      radial-gradient(900px 480px at -10% 8%, rgba(67, 224, 208, 0.09), transparent 55%),
+      linear-gradient(180deg, var(--bg1), var(--bg0) 340px);
+    background-color: var(--bg0);
+    min-height: 100vh; line-height: 1.55;
+  }
+
+  /* ── GLM 5.3 banner ─────────────────────────────────────────── */
+  .banner {
+    position: sticky; top: 0; z-index: 40;
+    background: linear-gradient(100deg, #2b1e6e, #0d3f6e 30%, #0c5f57 55%, #45126b 85%, #2b1e6e);
+    background-size: 220% 100%;
+    animation: bannerflow 14s linear infinite;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.16);
+  }
+  @keyframes bannerflow { to { background-position: 220% 0; } }
+  .banner-inner {
+    max-width: 1240px; margin: 0 auto; padding: 9px 24px;
+    display: flex; align-items: center; gap: 12px;
+  }
+  .banner .wordmark {
+    font-weight: 800; font-size: 15px; letter-spacing: 0.14em;
+    color: #fff; text-shadow: 0 1px 12px rgba(255, 255, 255, 0.45);
+    white-space: nowrap;
+  }
+  .banner .pulse {
+    width: 8px; height: 8px; border-radius: 50%; background: #6dffc9;
+    box-shadow: 0 0 0 0 rgba(109, 255, 201, 0.7); animation: pulse 2.2s infinite; flex: none;
+  }
+  @keyframes pulse { 70% { box-shadow: 0 0 0 9px rgba(109, 255, 201, 0); } 100% { box-shadow: 0 0 0 0 rgba(109, 255, 201, 0); } }
+  .banner .tag {
+    margin-left: auto; font-size: 11.5px; letter-spacing: 0.08em; text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.82); white-space: nowrap;
+  }
+  @media (max-width: 640px) { .banner .tag span.opt { display: none; } }
+
+  /* ── header ─────────────────────────────────────────────────── */
+  .wrap { max-width: 1240px; margin: 0 auto; padding: 0 24px 72px; }
+  header.hero { padding: 44px 0 22px; }
+  .hero .eyebrow {
+    font-size: 11.5px; font-weight: 700; letter-spacing: 0.22em; text-transform: uppercase;
+    color: var(--a2); margin: 0 0 10px;
+  }
+  .hero h1 {
+    margin: 0 0 10px; font-size: clamp(28px, 4.4vw, 44px); line-height: 1.08;
+    font-weight: 800; letter-spacing: -0.015em;
+  }
+  .hero h1 .gdpr { background: var(--grad); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .hero .lede { margin: 0 0 18px; color: var(--muted); font-size: 16.5px; max-width: 62ch; }
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 22px; }
+  .chip {
+    font-size: 12.5px; color: var(--muted); padding: 5px 12px; border-radius: 999px;
+    border: 1px solid var(--line); background: var(--panel); font-family: var(--mono);
+  }
+  .chip b { color: var(--text); font-weight: 600; }
+
+  .searchrow { position: relative; max-width: 560px; }
+  .searchrow svg { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); opacity: .5; }
+  #search {
+    width: 100%; padding: 12px 88px 12px 40px; border-radius: 14px;
+    border: 1px solid var(--line); background: var(--panel); color: var(--text);
+    font-size: 15px; font-family: var(--sans); outline: none; transition: border .15s, box-shadow .15s;
+  }
+  #search:focus { border-color: var(--a1); box-shadow: 0 0 0 4px rgba(124, 140, 255, 0.18); }
+  .kbd {
+    position: absolute; right: 12px; top: 50%; transform: translateY(-50%);
+    font-family: var(--mono); font-size: 11px; color: var(--faint);
+    border: 1px solid var(--line); border-radius: 6px; padding: 2px 7px; pointer-events: none;
+  }
+
+  /* ── layout ─────────────────────────────────────────────────── */
+  .layout { display: grid; grid-template-columns: minmax(340px, 430px) 1fr; gap: 22px; align-items: start; }
+  @media (max-width: 920px) { .layout { grid-template-columns: 1fr; } .detail { display: none; } .detail.open { display: block; } }
+
+  .pane-title {
+    font-size: 11.5px; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--faint); margin: 4px 2px 10px; display: flex; justify-content: space-between; align-items: baseline;
+  }
+  .pane-title .n { font-family: var(--mono); letter-spacing: 0; font-weight: 500; }
+
+  /* ── article list ───────────────────────────────────────────── */
+  .list { display: flex; flex-direction: column; gap: 10px; }
+  .group {
+    font-size: 11px; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase;
+    color: var(--a2); opacity: .9; margin: 14px 2px -2px; display: flex; align-items: center; gap: 10px;
+  }
+  .group::after { content: ""; height: 1px; flex: 1; background: var(--line-soft); }
+  .card {
+    position: relative; text-align: left; cursor: pointer; width: 100%;
+    border: 1px solid var(--line); background: var(--panel); border-radius: 16px;
+    padding: 14px 16px 13px 18px; color: var(--text); font-family: var(--sans);
+    transition: background .15s, border-color .15s, transform .15s;
+  }
+  .card:hover { background: var(--panel-hover); border-color: rgba(148, 163, 255, 0.3); transform: translateY(-1px); }
+  .card.sel { background: rgba(124, 140, 255, 0.1); border-color: rgba(124, 140, 255, 0.55); }
+  .card.sel::before {
+    content: ""; position: absolute; left: 0; top: 12px; bottom: 12px; width: 3px;
+    border-radius: 3px; background: var(--grad);
+  }
+  .card .row1 { display: flex; align-items: center; gap: 10px; margin-bottom: 6px; }
+  .artno {
+    font-family: var(--mono); font-size: 12px; font-weight: 600; color: #cfd8ff;
+    padding: 2px 9px; border-radius: 999px; border: 1px solid rgba(124, 140, 255, 0.4);
+    background: rgba(124, 140, 255, 0.1); white-space: nowrap;
+  }
+  .card.sel .artno { background: rgba(124, 140, 255, 0.28); }
+  .card .t { font-weight: 650; font-size: 15px; letter-spacing: -0.01em; }
+  .card .s {
+    color: var(--muted); font-size: 13.5px; display: -webkit-box;
+    -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;
+  }
+  .card .s mark, .sumcard .body mark { background: rgba(67, 224, 208, 0.22); color: #d9fff8; border-radius: 3px; padding: 0 2px; }
+  .empty { color: var(--faint); padding: 28px 6px; text-align: center; font-size: 14px; }
+
+  /* ── detail ─────────────────────────────────────────────────── */
+  .detail { position: sticky; top: 76px; }
+  .back {
+    display: none; margin-bottom: 12px; font-size: 13px; color: var(--a2); background: none;
+    border: none; cursor: pointer; padding: 0; font-family: var(--sans);
+  }
+  @media (max-width: 920px) { .back { display: inline-flex; gap: 6px; align-items: center; } .detail { position: static; } }
+  .paper {
+    border: 1px solid var(--line); border-radius: 20px; background: linear-gradient(180deg, rgba(146,160,255,.06), rgba(146,160,255,.02));
+    box-shadow: var(--shadow); padding: 30px 34px 34px; animation: rise .28s ease both;
+  }
+  @keyframes rise { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+  .paper .chapter { font-size: 11.5px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--a2); font-weight: 700; margin: 0 0 10px; }
+  .paper h2 { margin: 0 0 4px; font-size: clamp(21px, 2.6vw, 27px); line-height: 1.22; letter-spacing: -0.012em; font-weight: 750; }
+  .paper h2 .no {
+    font-family: var(--mono); background: var(--grad); -webkit-background-clip: text; background-clip: text;
+    color: transparent; margin-right: 10px; font-weight: 700;
+  }
+  .paper .src { color: var(--faint); font-size: 12.5px; margin: 2px 0 0; }
+
+  .sumcard {
+    margin: 24px 0 8px; border-radius: 16px; padding: 1px; background: linear-gradient(120deg, rgba(240,197,121,.75), rgba(180,139,255,.4), rgba(240,197,121,.15));
+  }
+  .sumcard > .inner { border-radius: 15px; background: linear-gradient(180deg, #141327, #0e0d1e); padding: 16px 18px 15px; }
+  .sumcard .microlabel {
+    display: flex; align-items: center; gap: 8px; font-size: 10.5px; font-weight: 800;
+    letter-spacing: 0.2em; text-transform: uppercase; color: var(--gold); margin-bottom: 8px;
+  }
+  .sumcard .microlabel .model {
+    margin-left: auto; letter-spacing: 0.06em; font-weight: 600; font-family: var(--mono);
+    color: #cbb37e; border: 1px solid rgba(240, 197, 121, 0.3); padding: 2px 8px; border-radius: 999px; font-size: 10.5px;
+  }
+  .sumcard .body { font-size: 15.5px; color: #f3ecd9; }
+  .copybtn {
+    margin-top: 12px; font-size: 12px; color: #cbb37e; background: rgba(240, 197, 121, 0.08);
+    border: 1px solid rgba(240, 197, 121, 0.3); border-radius: 9px; padding: 5px 12px; cursor: pointer;
+    font-family: var(--mono); transition: background .15s;
+  }
+  .copybtn:hover { background: rgba(240, 197, 121, 0.18); }
+
+  .fulllabel { font-size: 11.5px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--faint); font-weight: 700; margin: 28px 0 6px; }
+  .para { display: grid; grid-template-columns: 34px 1fr; gap: 14px; padding: 13px 0; border-top: 1px solid var(--line-soft); }
+  .para:first-of-type { border-top: none; }
+  .para .num {
+    width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+    font-family: var(--mono); font-size: 13px; font-weight: 700; color: #cfd8ff;
+    border: 1px solid rgba(124, 140, 255, 0.45); background: rgba(124, 140, 255, 0.1); margin-top: 2px;
+  }
+  .para .ptext { font-size: 15px; color: #d7ddf3; max-width: 74ch; }
+  .subps { margin: 10px 0 2px; display: flex; flex-direction: column; gap: 7px; }
+  .subp { display: grid; grid-template-columns: 26px 1fr; gap: 8px; font-size: 14.5px; color: #c0c9e6; max-width: 72ch; }
+  .subp .lid { font-family: var(--mono); color: var(--a2); font-weight: 600; }
+
+  footer { margin-top: 34px; color: var(--faint); font-size: 12.5px; border-top: 1px solid var(--line-soft); padding-top: 16px; }
+  footer a { color: var(--muted); }
+  .hint { color: var(--faint); font-size: 12px; margin-top: 10px; font-family: var(--mono); }
+  kbd.h { border: 1px solid var(--line); border-radius: 5px; padding: 0 5px; font-size: 11px; }
+
+  .fatal { padding: 60px 20px; text-align: center; color: var(--muted); }
+  .fatal b { color: var(--text); }
+</style>
+</head>
+<body>
+
+<div class="banner" role="banner">
+  <div class="banner-inner">
+    <span class="pulse" aria-hidden="true"></span>
+    <span class="wordmark">GLM&nbsp;5.3</span>
+    <span class="tag"><span class="opt">vibe-coded&nbsp;·&nbsp;</span>MLCon Berlin 2026</span>
+  </div>
+</div>
+
+<div class="wrap">
+  <header class="hero">
+    <p class="eyebrow">Regulation (EU) 2016/679</p>
+    <h1><span class="gdpr">GDPR</span> Article Explorer</h1>
+    <p class="lede">The General Data Protection Regulation, article by article — each one summarised in plain English by a local LLM, with the official text alongside.</p>
+    <div class="chips">
+      <span class="chip"><b id="stat-articles">…</b> articles</span>
+      <span class="chip"><b id="stat-chapters">…</b> chapters</span>
+      <span class="chip">summaries: <b>qwen3.5:4b</b> · Ollama · on-device</span>
+      <span class="chip">text: gdpr-info.eu</span>
+    </div>
+    <div class="searchrow">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+      <input id="search" type="search" placeholder="Search articles, summaries, rights…" autocomplete="off" spellcheck="false" aria-label="Search articles">
+      <span class="kbd">/</span>
+    </div>
+  </header>
+
+  <div class="layout">
+    <div>
+      <div class="pane-title"><span>Articles</span><span class="n" id="listcount"></span></div>
+      <div class="list" id="list" role="list"></div>
+      <p class="hint"><kbd class="h">↑</kbd> <kbd class="h">↓</kbd> move · <kbd class="h">/</kbd> search · <kbd class="h">Esc</kbd> clear</p>
+    </div>
+
+    <section class="detail" id="detail" aria-live="polite"></section>
+  </div>
+</div>
+
+<script>
+"use strict";
+
+const state = { items: [], q: "", sel: 0 };
+const $ = (id) => document.getElementById(id);
+const esc = (s) => s.replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const rxEscape = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+
+function hilite(escaped, q) {
+  if (q.length < 2) return escaped;
+  try { return escaped.replace(new RegExp("(" + rxEscape(esc(q)) + ")", "gi"), "<mark>$1</mark>"); }
+  catch (e) { return escaped; }
+}
+
+// full_article text → [{num, text, subs:[{id,text}]}]
+function parseArticle(text) {
+  const paras = [];
+  for (const raw of text.split("\n")) {
+    const ln = raw.trim();
+    if (!ln) continue;
+    let m = ln.match(/^(\d+)\.\s+(.*)$/);
+    if (m) { paras.push({ num: m[1], text: m[2], subs: [] }); continue; }
+    m = ln.match(/^\(([a-z])\)\s+(.*)$/);
+    if (m && paras.length) { paras[paras.length - 1].subs.push({ id: m[1], text: m[2] }); continue; }
+    if (paras.length) { const p = paras[paras.length - 1]; p.text += " " + ln; }
+    else paras.push({ num: null, text: ln, subs: [] });
+  }
+  return paras;
+}
+
+function visibleItems() {
+  const q = state.q.trim().toLowerCase();
+  return state.items
+    .map((a, i) => ({ a, i }))
+    .filter(({ a }) => !q || (a.article + " " + a.title + " " + a.summary + " " + a.chapter).toLowerCase().includes(q));
+}
+
+function renderList() {
+  const q = state.q.trim();
+  const vis = visibleItems();
+  $("listcount").textContent = vis.length + " / " + state.items.length;
+  const el = $("list");
+  if (!vis.length) {
+    el.innerHTML = '<p class="empty">No article matches “' + esc(q) + '”.<br>Try “portability”, “profiling”, “controller”…</p>';
+    return;
+  }
+  let html = "", lastChapter = null;
+  for (const { a, i } of vis) {
+    if (a.chapter !== lastChapter) { html += '<div class="group">' + esc(a.chapter) + "</div>"; lastChapter = a.chapter; }
+    html +=
+      '<button class="card' + (i === state.sel ? " sel" : "") + '" role="listitem" data-i="' + i + '" aria-pressed="' + (i === state.sel) + '">' +
+        '<span class="row1"><span class="artno">' + esc(a.article) + '</span><span class="t">' + hilite(esc(a.title), q) + "</span></span>" +
+        '<span class="s">' + hilite(esc(a.summary), q) + "</span>" +
+      "</button>";
+  }
+  el.innerHTML = html;
+  el.querySelectorAll(".card").forEach((c) => c.addEventListener("click", () => select(+c.dataset.i, true)));
+}
+
+function renderDetail() {
+  const a = state.items[state.sel];
+  if (!a) { $("detail").innerHTML = ""; return; }
+  const paras = parseArticle(a.full_article);
+  let body = "";
+  for (const p of paras) {
+    body += '<div class="para">';
+    body += p.num ? '<div class="num">' + esc(p.num) + "</div>" : "<div></div>";
+    body += '<div><div class="ptext">' + esc(p.text) + "</div>";
+    if (p.subs.length) {
+      body += '<div class="subps">' + p.subs.map((s) =>
+        '<div class="subp"><span class="lid">(' + esc(s.id) + ')</span><span>' + esc(s.text) + "</span></div>").join("") + "</div>";
+    }
+    body += "</div></div>";
+  }
+  $("detail").innerHTML =
+    '<button class="back" onclick="document.querySelector(\'.layout\').scrollIntoView()">&larr; All articles</button>' +
+    '<article class="paper">' +
+      '<p class="chapter">' + esc(a.chapter) + "</p>" +
+      '<h2><span class="no">' + esc(a.article) + "</span>" + esc(a.title) + "</h2>" +
+      '<p class="src">Official text · gdpr-info.eu · Article ' + esc(a.article.replace(/\D/g, "")) + " of 99</p>" +
+      '<div class="sumcard"><div class="inner">' +
+        '<div class="microlabel">✦ AI summary<span class="model">qwen3.5:4b · local</span></div>' +
+        '<p class="body">' + esc(a.summary) + "</p>" +
+        '<button class="copybtn" id="copybtn">Copy summary</button>' +
+      "</div></div>" +
+      '<p class="fulllabel">Full article</p>' + body +
+      "<footer>Summaries are generated locally by <b>qwen3.5:4b</b> via Ollama — concise, not legal advice; verify against the official text at <a href=\"https://gdpr-info.eu\" target=\"_blank\" rel=\"noopener\">gdpr-info.eu</a>.</footer>" +
+    "</article>";
+  const btn = $("copybtn");
+  btn.addEventListener("click", () => {
+    navigator.clipboard.writeText(a.article + " — " + a.title + ": " + a.summary).then(() => {
+      btn.textContent = "Copied ✓"; setTimeout(() => (btn.textContent = "Copy summary"), 1400);
+    }).catch(() => {});
+  });
+  if (window.innerWidth <= 920) $("detail").classList.add("open");
+}
+
+function select(i, fromUser) {
+  state.sel = i;
+  renderList(); renderDetail();
+  const card = document.querySelector('.card[data-i="' + i + '"]');
+  if (card && fromUser) card.scrollIntoView({ block: "nearest" });
+  history.replaceState(null, "", "#art-" + state.items[i].article.replace(/\D/g, ""));
+}
+
+function move(dir) {
+  const vis = visibleItems().map(({ i }) => i);
+  if (!vis.length) return;
+  let pos = vis.indexOf(state.sel);
+  if (pos === -1) pos = dir > 0 ? -1 : 0;
+  const next = vis[Math.min(vis.length - 1, Math.max(0, pos + dir))];
+  select(next, true);
+}
+
+fetch("gdpr.json")
+  .then((r) => { if (!r.ok) throw new Error(r.status); return r.json(); })
+  .then((data) => {
+    state.items = data.GDPR || [];
+    $("stat-articles").textContent = state.items.length;
+    $("stat-chapters").textContent = new Set(state.items.map((a) => a.chapter)).size;
+    const hashArt = (location.hash.match(/^#art-(\d+)/) || [])[1];
+    const start = Math.max(0, state.items.findIndex((a) => a.article === "Art. " + hashArt));
+    renderList(); select(start === -1 ? 0 : start, false);
+  })
+  .catch(() => {
+    document.querySelector(".layout").innerHTML =
+      '<div class="fatal"><b>Could not load gdpr.json.</b><br>Generate it first: <code>python3 scrape_gdpr.py</code></div>';
+  });
+
+$("search").addEventListener("input", (e) => { state.q = e.target.value; renderList(); });
+$("search").addEventListener("keydown", (e) => { if (e.key === "Escape") { e.target.value = ""; state.q = ""; renderList(); } });
+document.addEventListener("keydown", (e) => {
+  if (e.key === "/" && document.activeElement !== $("search")) { e.preventDefault(); $("search").focus(); return; }
+  if (document.activeElement === $("search")) { if (e.key === "ArrowDown") { e.preventDefault(); move(1); } return; }
+  if (e.key === "ArrowDown" || e.key === "ArrowUp") { e.preventDefault(); move(e.key === "ArrowDown" ? 1 : -1); }
+  if (e.key === "Escape" && window.innerWidth <= 920) $("detail").classList.remove("open");
+});
+</script>
+</body>
+</html>

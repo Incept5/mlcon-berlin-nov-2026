@@ -1,0 +1,216 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GDPR Explorer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#070b1a; --bg2:#0d1430; --panel:rgba(255,255,255,.045); --panel-hi:rgba(255,255,255,.08);
+  --line:rgba(255,255,255,.09); --text:#e8ecf8; --muted:#97a0c0; --gold:#ffcc33; --gold2:#ffb000;
+  --blue:#3d5afe; --violet:#9b5cff; --radius:18px;
+  --serif:"Fraunces",Georgia,serif; --sans:"Inter",system-ui,-apple-system,sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{font-family:var(--sans);color:var(--text);background:var(--bg);overflow:hidden;
+  background-image:radial-gradient(1200px 600px at 10% -10%,rgba(61,90,254,.28),transparent 60%),
+                   radial-gradient(900px 500px at 110% 10%,rgba(155,92,255,.22),transparent 60%),
+                   radial-gradient(800px 600px at 50% 120%,rgba(255,204,51,.08),transparent 60%);}
+/* Opus banner */
+.banner{position:relative;z-index:5;height:34px;display:flex;align-items:center;justify-content:center;gap:10px;
+  font-size:13px;font-weight:600;letter-spacing:.22em;text-transform:uppercase;color:#1a1300;
+  background:linear-gradient(90deg,#ffb000,#ffe08a 30%,#ffcc33 50%,#ffe08a 70%,#ffb000);background-size:200% 100%;
+  animation:sheen 8s linear infinite;box-shadow:0 4px 30px rgba(255,190,0,.35)}
+.banner b{font-family:var(--serif);letter-spacing:.08em;font-size:15px;text-transform:none}
+@keyframes sheen{to{background-position:-200% 0}}
+/* header */
+header{display:flex;align-items:center;gap:22px;padding:22px 32px 18px;flex-wrap:wrap}
+.stars{width:52px;height:52px;flex:none}
+h1{font-family:var(--serif);font-weight:700;font-size:30px;letter-spacing:-.01em;line-height:1}
+h1 span{background:linear-gradient(90deg,var(--gold),#fff 70%);-webkit-background-clip:text;background-clip:text;color:transparent}
+.sub{color:var(--muted);font-size:13.5px;margin-top:6px}
+.search{margin-left:auto;position:relative;flex:1;max-width:420px;min-width:220px}
+.search input{width:100%;padding:12px 16px 12px 42px;border-radius:999px;border:1px solid var(--line);
+  background:var(--panel);color:var(--text);font:inherit;font-size:14px;outline:none;transition:.2s}
+.search input:focus{border-color:rgba(255,204,51,.6);background:var(--panel-hi);box-shadow:0 0 0 4px rgba(255,204,51,.1)}
+.search svg{position:absolute;left:15px;top:50%;transform:translateY(-50%);opacity:.6}
+/* layout */
+main{display:grid;grid-template-columns:minmax(320px,440px) 1fr;gap:24px;padding:0 32px 28px;height:calc(100vh - 34px - 96px)}
+.list{overflow-y:auto;padding-right:6px;scrollbar-width:thin;scrollbar-color:rgba(255,255,255,.15) transparent}
+.chapter{font-size:11px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--gold);
+  margin:18px 4px 10px;display:flex;gap:8px;align-items:center}
+.chapter:first-child{margin-top:2px}
+.chapter i{font-style:normal;color:var(--muted);letter-spacing:.04em;text-transform:none;font-weight:500;font-size:12.5px}
+.card{position:relative;display:block;width:100%;text-align:left;font:inherit;color:inherit;cursor:pointer;
+  padding:16px 18px 16px 20px;margin-bottom:10px;border-radius:var(--radius);border:1px solid var(--line);
+  background:var(--panel);backdrop-filter:blur(12px);transition:transform .18s,border-color .18s,background .18s;
+  animation:rise .5s both}
+.card:hover{transform:translateY(-2px);background:var(--panel-hi);border-color:rgba(255,255,255,.18)}
+.card.active{border-color:rgba(255,204,51,.55);background:linear-gradient(135deg,rgba(255,204,51,.12),rgba(61,90,254,.10))}
+.card.active::before{content:"";position:absolute;left:0;top:14px;bottom:14px;width:3px;border-radius:3px;background:var(--gold)}
+.card .top{display:flex;align-items:baseline;gap:10px;margin-bottom:6px}
+.num{font-family:var(--serif);font-weight:700;font-size:15px;color:var(--gold);white-space:nowrap}
+.ttl{font-size:13px;font-weight:600;color:#cfd6f2;line-height:1.3}
+.card p{font-size:13.5px;line-height:1.55;color:var(--muted)}
+.card.active p{color:#d8def5}
+@keyframes rise{from{opacity:0;transform:translateY(8px)}}
+mark{background:rgba(255,204,51,.3);color:inherit;border-radius:3px;padding:0 1px}
+/* detail */
+.detail{position:relative;overflow-y:auto;border-radius:24px;border:1px solid var(--line);
+  background:linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,.025));backdrop-filter:blur(16px);
+  box-shadow:0 30px 80px rgba(0,0,0,.45)}
+.detail-inner{max-width:780px;margin:0 auto;padding:44px 48px 60px;animation:fade .35s both}
+@keyframes fade{from{opacity:0;transform:translateY(6px)}}
+.crumb{font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:14px}
+.crumb b{color:var(--gold);font-weight:600}
+.big{font-family:var(--serif);font-size:64px;line-height:.9;font-weight:700;
+  background:linear-gradient(120deg,var(--gold) 10%,#fff 60%);-webkit-background-clip:text;background-clip:text;color:transparent}
+.detail h2{font-family:var(--serif);font-weight:500;font-size:28px;line-height:1.2;margin:10px 0 26px}
+.summary{padding:20px 22px;border-radius:16px;margin-bottom:34px;font-size:15.5px;line-height:1.65;
+  background:linear-gradient(135deg,rgba(61,90,254,.18),rgba(155,92,255,.12));border:1px solid rgba(155,92,255,.3)}
+.summary small{display:flex;align-items:center;gap:8px;font-size:11px;font-weight:600;letter-spacing:.16em;
+  text-transform:uppercase;color:#b9a6ff;margin-bottom:8px}
+.label{font-size:11px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin-bottom:14px}
+.para{display:grid;grid-template-columns:38px 1fr;gap:6px;margin-bottom:16px;font-size:15.5px;line-height:1.75;color:#dfe4f6}
+.para .n{font-family:var(--serif);font-weight:700;color:var(--gold);font-size:17px}
+.para.sub{grid-template-columns:38px 1fr;margin-left:38px;margin-bottom:10px;font-size:15px;color:#c5cce6}
+.para.sub .n{font-family:var(--sans);font-weight:600;font-size:14px;color:#b9a6ff}
+.para.subsub{margin-left:76px}
+.recitals{margin-top:36px;padding-top:24px;border-top:1px solid var(--line)}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{font-size:12.5px;padding:7px 12px;border-radius:999px;background:var(--panel);border:1px solid var(--line);color:#cfd6f2}
+.chip b{color:var(--gold);margin-right:6px}
+.foot{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:36px;flex-wrap:wrap}
+.btn{display:inline-flex;align-items:center;gap:8px;font:inherit;font-size:13px;font-weight:600;color:var(--text);
+  padding:10px 16px;border-radius:999px;border:1px solid var(--line);background:var(--panel);cursor:pointer;text-decoration:none;transition:.2s}
+.btn:hover{border-color:var(--gold);color:var(--gold)}
+.empty{height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;color:var(--muted);text-align:center;padding:40px}
+.close{display:none}
+@media (max-width:860px){
+  body{overflow:auto}
+  header{padding:18px 16px 14px}
+  .search{max-width:none;margin-left:0;flex-basis:100%}
+  main{grid-template-columns:1fr;height:auto;padding:0 16px 24px}
+  .list{overflow:visible}
+  .detail{position:fixed;inset:34px 0 0;border-radius:0;z-index:4;transform:translateX(100%);transition:transform .3s;background:var(--bg2)}
+  .detail.open{transform:none}
+  .detail-inner{padding:28px 20px 60px}
+  .big{font-size:48px}
+  .close{display:inline-flex;margin-bottom:18px}
+  .para.sub{margin-left:18px}.para.subsub{margin-left:36px}
+}
+</style>
+</head>
+<body>
+<div class="banner"><span>✦</span><b>Opus 5.5</b><span>✦</span></div>
+<header>
+  <svg class="stars" viewBox="0 0 100 100" aria-hidden="true">
+    <circle cx="50" cy="50" r="48" fill="#13206b" stroke="rgba(255,204,51,.4)"/>
+    <g fill="#ffcc33" id="ring"></g>
+  </svg>
+  <div>
+    <h1><span>GDPR</span> Explorer</h1>
+    <div class="sub" id="sub">General Data Protection Regulation · plain-English summaries by qwen3.5:4b</div>
+  </div>
+  <label class="search">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+    <input id="q" type="search" placeholder="Search summaries and full text…  ( / )" autocomplete="off">
+  </label>
+</header>
+<main>
+  <nav class="list" id="list" aria-label="Articles"></nav>
+  <section class="detail" id="detail"><div class="empty">Select an article on the left.</div></section>
+</main>
+<script>
+// EU circle of stars
+(() => { const g = document.getElementById('ring'); let s = '';
+  for (let i = 0; i < 12; i++) { const a = i / 12 * 2 * Math.PI, x = 50 + 32 * Math.sin(a), y = 50 - 32 * Math.cos(a);
+    s += `<polygon transform="translate(${x} ${y}) scale(5)" points="0,-1 .22,-.31 .95,-.31 .36,.12 .59,.81 0,.38 -.59,.81 -.36,.12 -.95,-.31 -.22,-.31"/>`; }
+  g.innerHTML = s; })();
+
+let ARTS = [], current = null;
+const $ = id => document.getElementById(id);
+const esc = s => (s || '').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const hl = (s, q) => q ? esc(s).replace(new RegExp('(' + q.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + ')', 'gi'), '<mark>$1</mark>') : esc(s);
+
+fetch('gdpr.json').then(r => r.json()).then(d => {
+  ARTS = d.GDPR;
+  const ch = new Set(ARTS.map(a => a.chapter).filter(Boolean)).size;
+  $('sub').textContent = `${ARTS.length} articles · ${ch} chapter${ch === 1 ? '' : 's'} · plain-English summaries by qwen3.5:4b`;
+  renderList();
+  const m = location.hash.match(/art-(\d+)/);
+  select(m ? +m[1] : ARTS[0].number, false);
+});
+
+function renderList() {
+  const q = $('q').value.trim(), ql = q.toLowerCase();
+  let html = '', lastCh = null, i = 0;
+  for (const a of ARTS) {
+    if (ql && !(a.summary + a.title + a.full_article + a.article).toLowerCase().includes(ql)) continue;
+    if (a.chapter !== lastCh) { lastCh = a.chapter;
+      html += `<div class="chapter">${esc(a.chapter || 'GDPR')} <i>${esc(a.chapter_title || '')}</i></div>`; }
+    html += `<button class="card${a.number === current ? ' active' : ''}" data-n="${a.number}" style="animation-delay:${Math.min(i++, 20) * 30}ms">
+      <div class="top"><span class="num">${esc(a.article)}</span><span class="ttl">${hl(a.title, q)}</span></div>
+      <p>${hl(a.summary, q)}</p></button>`;
+  }
+  $('list').innerHTML = html || '<div class="empty">No articles match.</div>';
+}
+
+function formatArticle(text) {
+  return text.split('\n').map(line => {
+    const depth = (line.match(/^ */)[0].length) / 4, t = line.trim();
+    const m = t.match(/^(\d+\.|\([a-z]+\))\s+(.*)$/);
+    if (!m) { // continuation text after a sub-list: align with its parent item's text
+      const d = Math.max(0, depth - 1), c = d === 0 ? 'para' : d === 1 ? 'para sub' : 'para sub subsub';
+      return `<div class="${c}"><span class="n"></span><span>${linkify(esc(t))}</span></div>`; }
+    const cls = depth === 0 ? 'para' : depth === 1 ? 'para sub' : 'para sub subsub';
+    return `<div class="${cls}"><span class="n">${m[1].replace('.', '')}</span><span>${linkify(esc(m[2]))}</span></div>`;
+  }).join('');
+}
+// make "Article 9" clickable when we have it
+const linkify = s => s.replace(/Article (\d+)/g, (w, n) => ARTS.some(a => a.number === +n)
+  ? `<a href="#art-${n}" style="color:var(--gold)">${w}</a>` : w);
+
+function select(n, scroll = true) {
+  const a = ARTS.find(x => x.number === n); if (!a) return;
+  current = n; history.replaceState(null, '', '#art-' + n);
+  document.querySelectorAll('.card').forEach(c => c.classList.toggle('active', +c.dataset.n === n));
+  const idx = ARTS.indexOf(a), prev = ARTS[idx - 1], next = ARTS[idx + 1];
+  const recs = (a.recitals || []).map(r => { const m = r.match(/\(\s*(\d+)\s*\)\s*(.*)/);
+    return m ? `<span class="chip"><b>${m[1]}</b>${esc(m[2])}</span>` : `<span class="chip">${esc(r)}</span>`; }).join('');
+  $('detail').innerHTML = `<div class="detail-inner">
+    <button class="btn close" onclick="$('detail').classList.remove('open')">← All articles</button>
+    <div class="crumb">${esc(a.chapter || '')} · <b>${esc(a.chapter_title || '')}</b></div>
+    <div class="big">${esc(a.article)}</div>
+    <h2>${esc(a.title)}</h2>
+    <div class="summary"><small>✦ In plain English</small>${esc(a.summary)}</div>
+    <div class="label">Full text</div>
+    ${formatArticle(a.full_article)}
+    ${recs ? `<div class="recitals"><div class="label">Suitable recitals</div><div class="chips">${recs}</div></div>` : ''}
+    <div class="foot">
+      <span>${prev ? `<button class="btn" onclick="select(${prev.number})">← ${esc(prev.article)}</button>` : ''}</span>
+      <a class="btn" href="${esc(a.url)}" target="_blank" rel="noopener">View on gdpr-info.eu ↗</a>
+      <span>${next ? `<button class="btn" onclick="select(${next.number})">${esc(next.article)} →</button>` : ''}</span>
+    </div></div>`;
+  $('detail').scrollTop = 0;
+  if (scroll) { $('detail').classList.add('open');
+    document.querySelector('.card.active')?.scrollIntoView({block: 'nearest', behavior: 'smooth'}); }
+}
+
+$('list').addEventListener('click', e => { const c = e.target.closest('.card'); if (c) select(+c.dataset.n); });
+$('q').addEventListener('input', renderList);
+window.addEventListener('hashchange', () => { const m = location.hash.match(/art-(\d+)/); if (m && +m[1] !== current) select(+m[1]); });
+document.addEventListener('keydown', e => {
+  if (e.key === '/' && document.activeElement !== $('q')) { e.preventDefault(); $('q').focus(); return; }
+  if (e.key === 'Escape') { $('detail').classList.remove('open'); $('q').blur(); }
+  if (!['ArrowDown', 'ArrowUp', 'j', 'k'].includes(e.key) || document.activeElement === $('q')) return;
+  const cards = [...document.querySelectorAll('.card')], i = cards.findIndex(c => +c.dataset.n === current);
+  const nxt = cards[i + (e.key === 'ArrowDown' || e.key === 'j' ? 1 : -1)];
+  if (nxt) { e.preventDefault(); select(+nxt.dataset.n); }
+});
+</script>
+</body>
+</html>

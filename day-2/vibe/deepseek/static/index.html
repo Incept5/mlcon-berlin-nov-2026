@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GDPR Article Explorer · DeepSeek Flash</title>
+<meta name="description" content="Browse GDPR articles by plain-English summary, generated locally by qwen3.5:4b.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%2322d3ee' d='M13 2 4.5 13.5H11l-1 8.5 9-12h-6.5z'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+
+<header class="banner">
+  <div class="banner-sheen" aria-hidden="true"></div>
+  <div class="banner-inner">
+    <a class="brand" href="#" aria-label="DeepSeek Flash home">
+      <span class="bolt" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M13.5 2 4 13.5h6.2L9.5 22 20 10.5h-6.6z" fill="url(#b)"/><defs><linearGradient id="b" x1="4" y1="2" x2="20" y2="22"><stop stop-color="#5eead4"/><stop offset=".5" stop-color="#22d3ee"/><stop offset="1" stop-color="#a78bfa"/></linearGradient></defs></svg>
+      </span>
+      <span class="brand-text">DeepSeek<span class="brand-accent">Flash</span></span>
+    </a>
+
+    <span class="banner-rule" aria-hidden="true"></span>
+
+    <div class="product">
+      <span class="product-name">GDPR Article Explorer</span>
+      <span class="product-sub">Summaries written by a local model</span>
+    </div>
+
+    <div class="banner-meta">
+      <span class="badge" id="model-badge" title="Summarisation model">qwen3.5:4b · local</span>
+      <span class="badge badge-ghost" id="count-badge">— articles</span>
+    </div>
+  </div>
+</header>
+
+<main class="layout">
+
+  <!-- ─── Summary list ─────────────────────────────────────────────── -->
+  <aside class="list-pane" aria-label="Articles by summary">
+    <div class="search-wrap">
+      <svg class="search-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m16.5 16.5 4.5 4.5"/></svg>
+      <input id="search" type="search" placeholder="Search summaries — try “consent”, “erasure”, “portability”"
+             autocomplete="off" spellcheck="false" aria-label="Search summaries">
+      <kbd class="search-kbd" aria-hidden="true">/</kbd>
+    </div>
+
+    <div class="list-head">
+      <h2>Articles</h2>
+      <span id="result-count" class="list-count"></span>
+    </div>
+
+    <div id="article-list" class="cards" role="listbox" aria-label="GDPR articles">
+      <div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div>
+    </div>
+  </aside>
+
+  <!-- ─── Reader ───────────────────────────────────────────────────── -->
+  <section class="reader" aria-label="Article text">
+    <div class="progress" aria-hidden="true"><div id="progress-bar"></div></div>
+
+    <div id="reader-empty" class="empty">
+      <div class="empty-glyph" aria-hidden="true">§</div>
+      <p>Select an article summary to read the full text.</p>
+      <p class="empty-hint">Use <kbd>↑</kbd> <kbd>↓</kbd> to move, <kbd>/</kbd> to search.</p>
+    </div>
+
+    <article id="reader" class="document" hidden>
+      <div class="doc-head">
+        <div class="doc-eyebrow">
+          <span id="doc-label" class="doc-chip">Art. 20</span>
+          <span id="doc-words" class="doc-meta"></span>
+        </div>
+        <h1 id="doc-title">Right to data portability</h1>
+        <div class="doc-actions">
+          <button id="back-btn" class="btn btn-ghost back-btn" type="button">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 19l-7-7 7-7"/></svg>
+            <span>All articles</span>
+          </button>
+          <button id="copy-btn" class="btn" type="button">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg>
+            <span>Copy text</span>
+          </button>
+          <a class="btn btn-ghost" id="source-link" href="https://gdpr-info.eu/" target="_blank" rel="noopener">
+            Source
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 5h5v5M19 5l-8 8"/><path d="M19 14v4a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4"/></svg>
+          </a>
+        </div>
+      </div>
+
+      <div id="doc-body" class="doc-body"></div>
+
+      <footer class="doc-foot">
+        <span class="dot" aria-hidden="true"></span>
+        Text from <a href="https://gdpr-info.eu/" target="_blank" rel="noopener">gdpr-info.eu</a>
+        · Summary generated locally by qwen3.5:4b · Not legal advice
+      </footer>
+    </article>
+  </section>
+</main>
+
+<script src="/static/app.js"></script>
+</body>
+</html>
